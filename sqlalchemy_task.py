@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Float
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, create_engine
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
 
@@ -55,4 +56,11 @@ class Departments(Base):
 
 
 if __name__ == '__main__':
-    pass
+
+    engine = create_engine('sqlite:///:memory:', echo=True)
+
+    Base.metadata.create_all(engine)
+
+    Session = sessionmaker(bind=engine)
+
+    session = Session()
