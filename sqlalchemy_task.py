@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Float, create_engine
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, create_engine, Numeric
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -34,7 +34,7 @@ class Positions(Base):
 class Salaries(Base):
     __tablename__ = 'Salaries'
     salary_id = Column(Integer, primary_key=True)
-    amount = Column(Float, nullable=False)
+    amount = Column(Numeric, nullable=False)
 
     def __repr__(self):
         return f"Salary(" \
@@ -46,7 +46,7 @@ class Departments(Base):
     __tablename__ = 'Departments'
     department_id = Column(Integer, primary_key=True)
     name = Column(String(40), nullable=False)
-    manager_id = Column(Integer, ForeignKey("Employees.employee_id"), nullable=False)
+    manager_id = Column(Integer, ForeignKey("Employees.employee_id"), nullable=True)
 
     def __repr__(self):
         return f"Department(" \
@@ -64,3 +64,14 @@ if __name__ == '__main__':
     Session = sessionmaker(bind=engine)
 
     session = Session()
+
+    department = Departments(name="Departament spraw trudnych")
+    position = Positions(name="Trener", department_id=1)
+    salary = Salaries(amount=15000.0)
+    employee = Employees(first_name="Adam", last_name="Harmasz", position_id=1, salary_id=1)
+    session.add_all([department, position, salary, employee])
+    session.commit()
+    print(session.query(Departments).all())
+    print(session.query(Employees).all())
+    print(session.query(Positions).all())
+    print(session.query(Salaries).all())
